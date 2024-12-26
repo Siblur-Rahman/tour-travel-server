@@ -1,8 +1,9 @@
-import express, { NextFunction, Request, Response } from 'express'
-import userRouter from './module/user/user.router'
-import tourRouter from './module/tour/tour.route'
-import { StatusCodes } from 'http-status-codes'
+
+import express, { Request, Response } from 'express'
+import { globalErrorHandler } from './middlewares/globalErrorHandler'
 import bookingRouter from './module/booking/booking.route'
+import tourRouter from './module/tour/tour.route'
+import userRouter from './module/user/user.router'
 
 const app = express()
 
@@ -22,14 +23,18 @@ app.get('/', (req: Request, res: Response) => {
   })
 })
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-app.use((err: any, req: Request, res: Response, _next: NextFunction) => {
-  // _next means on use
-  res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-    success: false,
-    message: err.message,
-    error: err,
+
+app.use(globalErrorHandler)
+
+app.use("*", (req: Request, res: Response) => {
+  res.status(404).json({
+    status: false,
+    message: 'Route not found'
   })
 })
 
 export default app
+
+// req, res > jwt funtion next() > function 
+// express -> workflow = 
+// train -> [router]-[controller -error]-[service - error]-[errorHandler]->

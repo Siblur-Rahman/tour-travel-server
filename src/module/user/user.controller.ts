@@ -1,36 +1,33 @@
 // req and res manage
 
-import { userService } from './user.service'
-import sendResponse from '../utils/sendResponse'
 import { StatusCodes } from 'http-status-codes'
-import catchAsync from '../utils/catchAsync'
+import catchAsync from '../../utils/catchAsync'
+import sendResponse from '../../utils/sendResponse'
+import { userService } from './user.service'
 
-// const createUser = async (req: Request, res: Response, next: NextFunction) => {
-//   try {
-//     const payload = req.body
+const createUser = catchAsync(
 
-//     const result = await userService.createUser(payload)
+  async (req, res) => {
+    const payload = req.body
+    console.log({ payload });
+    console.log(payload);
 
-//     sendResponse(res, {
-//       statusCode: StatusCodes.CREATED,
-//       message: 'User created successfully',
-//       data: result,
-//     })
-//   } catch (error) {
-//     next(error)
-//   }
-// }
-const createUser = catchAsync(async (req, res) => {
-  const payload = req.body
+    const result = await userService.createUser(payload)
 
-  const result = await userService.createUser(payload)
+    // res.json({
+    //   status: true,
+    //   message: 'User created successfully',
+    //   data: result,
+    // })
 
-  sendResponse(res, {
-    statusCode: StatusCodes.CREATED,
-    message: 'User created successfully',
-    data: result,
+    sendResponse(res, {
+      statusCode: StatusCodes.CREATED,
+      message: 'User created successfully',
+      data: result,
+    }
+
+    )
   })
-})
 
 const getUser = catchAsync(async (req, res) => {
   const result = await userService.getUser()
@@ -43,11 +40,14 @@ const getUser = catchAsync(async (req, res) => {
 })
 
 const getSingleUser = catchAsync(async (req, res) => {
+  console.log(req.params)
   const userId = req.params.userId
+
   const result = await userService.getSingleUser(userId)
+
   sendResponse(res, {
     statusCode: StatusCodes.OK,
-    message: 'Users getting successfully',
+    message: 'User getting successfully',
     data: result,
   })
 })
@@ -70,7 +70,7 @@ const deleteUser = catchAsync(async (req, res) => {
 
   sendResponse(res, {
     statusCode: StatusCodes.OK,
-    message: 'User deleted successfully',
+    message: 'user deleted successfully',
     data: {},
   })
 })
