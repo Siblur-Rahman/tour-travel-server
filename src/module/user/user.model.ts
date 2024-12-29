@@ -1,5 +1,7 @@
 import { model, Schema } from 'mongoose'
 import { IUser } from './user.interface'
+import bcript from 'bcrypt'
+import config from '../../config'
 
 const userSchema = new Schema<IUser>({
   name: {
@@ -8,7 +10,8 @@ const userSchema = new Schema<IUser>({
     minlength: 3,
     maxlength: 50,
   },
-  age: { type: Number, required: [true, 'Please enter your age'] },
+  // age: { type: Number, required: [true, 'Please enter your age'] },
+  age: { type: Number },
   email: {
     type: String,
     required: [true, 'Please provide your email'],
@@ -21,6 +24,7 @@ const userSchema = new Schema<IUser>({
     },
     immutable: true,
   },
+  password: { type: String, required: true, select: false },
   photo: String,
   role: {
     type: String,
@@ -44,6 +48,21 @@ const userSchema = new Schema<IUser>({
 //   this.find({ userStatus: { $eq: 'active' } })
 //   next()
 // })
+
+userSchema.pre('save', async function (next) {
+  // eslint-disable-next-line @typescript-eslint/no-this-alias
+  const user = this
+  user.password = await bcript.hash(
+    user.password,
+    Number(config.bcript_salt_rounds)
+  )
+  next()
+})
+
+userSchema.post('save', function (doc, next) {
+  doc.password = ''
+  next()
+})
 
 // userSchema.post('find', function (docs, next) {
 //   docs.forEach((doc: IUser) => {
