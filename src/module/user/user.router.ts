@@ -4,20 +4,28 @@ import { UserValidation } from './userValidation'
 
 const userRouter = Router()
 
-userRouter.post('/create-user', async (req: Request, res: Response, next: NextFunction) => {
+userRouter.post(
+  '/create-user',
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
-        console.log({ body: req.body });
-        const parsedBody = await UserValidation.userValidationSchema.parseAsync(req.body)
-        req.body = parsedBody
-        console.log({ parsedBody });
-        next()
+      console.log({ body: req.body })
+      const parsedBody = await UserValidation.userValidationSchema.parseAsync(
+        req.body
+      )
+      req.body = parsedBody
+      console.log({ parsedBody })
+      next()
     } catch (error) {
-        next(error)
+      next(error)
     }
-}, userController.createUser)
+  },
+  userController.createUser
+)
 userRouter.get('/:userId', userController.getSingleUser)
 userRouter.put('/:userId', userController.updateUser)
 userRouter.delete('/:userId', userController.deleteUser)
+
+// authorization
 userRouter.get('/', userController.getUser)
 
 export default userRouter
